@@ -10,15 +10,54 @@
     {% extends 'main.html' %}
 
     {% block content %}
-    <h1>{{room.name}}</h1>
 
-    {% for message in messages %}
-    <div>
-    {{message.user}} -- {{message.body}}
+    <style>
+        .room-container{
+            display: grid;
+            grid-template-columns: 3fr 1fr;
+        }
+    </style>
+
+    <div class="room-container">
+        <div>
+            <h1>{{room.name}} </h1>
+            <p>{{room.description}}</p>
+
+            <div class="comment-wrapper">
+            <h3>Conversations</h3> 
+            
+            {% for message in room_messages %}
+            <div>
+            <small> {{message.user}} {{message.created|timesince}}</small><br>
+            {{message.body}}
+            <hr> 
+            </div>
+            {% empty %}
+            No Messages in this chat room
+            {% endfor %}
+            </div>
+
+            {% if request.user.is_authenticated %}
+            <div class="comment-form">
+                <form action="" method="POST">
+                    {% csrf_token %}
+                    <input type="text" name='body' placeholder="Write your message here..."/>
+                </form>
+            </div>
+            {% endif %}
+
+        </div>
+
+        <div>
+            <h3>Participants</h3> 
+
+            {% for participant in participants %}
+                <div>
+                    {{participant}} 
+                </div>
+            {% endfor %}
+        </div>
     </div>
-    {% empty %}
-    No Messages in this chat room
-    {% endfor %}
 
     {% endblock content %}
 </body>
